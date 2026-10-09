@@ -1,16 +1,15 @@
 """Input parsing helpers."""
 import os
 import shlex
-from typing import List, Tuple
 
 
-def parse_input(user_input: str) -> Tuple[str, List[str]]:
-    """Expand environment variables and split command input."""
-    expanded = os.path.expandvars(user_input)
-    if not expanded.strip():
+def parse_input(user_input: str) -> tuple[str, list[str]]:
+    """Split input into tokens and expand environment variables."""
+    if not user_input.strip():
         return "", []
     try:
-        parts = shlex.split(expanded)
+        parts = shlex.split(user_input)
     except ValueError as exc:
         raise ValueError(f"Некорректные кавычки: {exc}") from exc
+    parts = [os.path.expandvars(part) for part in parts]
     return parts[0], parts[1:]

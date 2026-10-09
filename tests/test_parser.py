@@ -1,27 +1,44 @@
-"""Parser tests for stage 1."""
+"""Tests for command parsing."""
 import os
 import unittest
+from unittest.mock import patch
 
 from src.parser import parse_input
 
 
 class ParserTests(unittest.TestCase):
-    """Test parser behavior."""
+    """Test input splitting and environment expansion."""
 
     def test_simple_command(self):
-        """Parse a simple command."""
-        self.assertEqual(
-            parse_input("ls -l"),
-            ("ls", ["-l"]),
-        )
+        self.assertEqual(parse_input("ls -l"), ("ls", ["-l"]))
 
     def test_environment_expansion(self):
-        """Expand an environment variable."""
-        os.environ["V20_HOME"] = "/home/test"
+        with patch.dict(os.environ, {"V20_HOME": "/home/test"}):
+            self.assertEqual(
+                parse_input("cd $V20_HOME"),
+                ("cd", ["/home/test"]),
+            )
+
+    def test_windows_path_expansion_preserves_backslashes(self):
+        windows_path = r"C:\Users\student"
+        with patch.dict(os.environ, {"V20_HOME": windows_path}):
+            self.assertEqual(
+                parse_input("cd $V20_HOME"),
+                ("cd", [windows_path]),
+            )
+
+    def test_quoted_argument(self):
         self.assertEqual(
-            parse_input("cd $V20_HOME"),
-            ("cd", ["/home/test"]),
+            parse_input('ls "folder with spaces"'),
+            ("ls", ["folder with spaces"]),
         )
+
+    def test_empty_input(self):
+        self.assertEqual(parse_input("   "), ("", []))
+
+    def test_unclosed_quote_raises_error(self):
+        with self.assertRaises(ValueError):
+            parse_input('ls "unfinished')
 
 
 if __name__ == "__main__":

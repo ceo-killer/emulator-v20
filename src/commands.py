@@ -1,23 +1,41 @@
-"""REPL prototype command stubs."""
-from typing import List
+"""Stage 1 shell command stubs."""
+from dataclasses import dataclass
 
 
-def _stub(name: str, args: List[str]) -> str:
-    """Return a textual representation of a stub command."""
+@dataclass(frozen=True)
+class CommandResult:
+    """Represent the outcome of a command."""
+
+    success: bool
+    output: str = ""
+    error: str = ""
+    should_exit: bool = False
+
+
+def _format_stub(name: str, args: list[str]) -> str:
+    """Format a command name and its arguments."""
     suffix = " ".join(args)
     return name if not suffix else f"{name} {suffix}"
 
 
-def cmd_ls(args: List[str]) -> str:
-    """Return the ls stub output."""
-    return _stub("ls", args)
-
-
-def cmd_cd(args: List[str]) -> str:
-    """Return the cd stub output."""
-    return _stub("cd", args)
-
-
-def cmd_exit(args: List[str]) -> bool:
-    """Signal that the application should exit."""
-    return True
+def execute_command(command: str, args: list[str]) -> CommandResult:
+    """Execute one supported stage 1 command."""
+    if command == "ls":
+        return CommandResult(True, output=_format_stub("ls", args))
+    if command == "cd":
+        return CommandResult(True, output=_format_stub("cd", args))
+    if command == "exit":
+        if args:
+            return CommandResult(
+                False,
+                error="Использование: exit",
+            )
+        return CommandResult(
+            True,
+            output="Выход.",
+            should_exit=True,
+        )
+    return CommandResult(
+        False,
+        error=f"Неизвестная команда: {command}",
+    )

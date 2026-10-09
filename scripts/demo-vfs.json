@@ -1,0 +1,16 @@
+{
+  "type": "dir",
+  "perms": "755",
+  "children": {
+    "home": {
+      "type": "dir",
+      "perms": "755",
+      "children": {}
+    },
+    "readme.txt": {
+      "type": "file",
+      "perms": "644",
+      "content": "SGVsbG8="
+    }
+  }
+}

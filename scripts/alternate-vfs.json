@@ -1,0 +1,16 @@
+{
+  "type": "dir",
+  "perms": "755",
+  "children": {
+    "documents": {
+      "type": "dir",
+      "perms": "755",
+      "children": {}
+    },
+    "notes.txt": {
+      "type": "file",
+      "perms": "644",
+      "content": "QWx0ZXJuYXRlIGRhdGE="
+    }
+  }
+}
